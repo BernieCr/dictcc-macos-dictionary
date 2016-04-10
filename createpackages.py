@@ -203,22 +203,35 @@ def addEntry(word, definition, entryType):
 	index = index.strip()   # .lower()
 	index = index.lower()
 	if index.endswith("-"): index = index[:-1]
+   
+	definitionx = definition
+	if entryType!='': definitionx = definition + '(' + entryType + ')'
 
 	# nothing left to be used as an index (e.g. entries like sayings) 
 	if len(index)<1:
 		raise NameError
+	
+	#dictionary[index][entries]	 -> 
+	#dictionary[index][entryType][entries]
 
 	# get entry from dictionary	
 	if dictionary.has_key(index):
 		entry = dictionary[index]
 	else:
 		entry = {}      # not found? create new entry
+		
+	#if entry.has_key(entryType):
+#		subentry = entry[entryType]
+#	else:
+#		subentry = {}
 
 	# add translation to entry 
 	if entry.has_key(word):
-		entry[word].append(definition)
+		entry[word].append(definitionx)
 	else:
-		entry[word]=[definition]
+		entry[word]=[definitionx]
+		
+	#entry[entryType] = subentry
 
 	# store entry in dictionary
 	dictionary[index] = entry;
@@ -257,6 +270,7 @@ def readVocabulary(filename):
             # remove incompatible characters
             line = line.replace("<","&lt;")
             line = line.replace(">","&gt;")
+            line = line.replace("&","&amp;")
 
             # split entry into english and german part 
             data = line.split("\t", 2);
@@ -287,15 +301,17 @@ def readVocabulary(filename):
             try:
                 addEntry(left, right, entryType);
             except:
-                if arguments.debug:
-                    print "addEntry('%s', '%s', '%s%') failed!" % (left, right, entryType)
-                errors =  errors+1
+				dsfsf=5
+                #if arguments.debug:
+                   # print "addEntry('%s', '%s', '%s') failed!" % (left, right, entryType)
+                #errors =  errors+1
             try:
                 addEntry(right, left, entryType);
             except:
-                if arguments.debug:
-                    print "addEntry('%s', '%s', '%s') failed!" % (right, left, entryType)
-                errors =  errors+1
+				dsfsf=5
+                #if arguments.debug:
+                   # print "addEntry('%s', '%s', '%s') failed!" % (right, left, entryType)
+                #errors =  errors+1
 
         input.close
         print("")

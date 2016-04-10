@@ -121,7 +121,7 @@ def updateInPreferences():
     # Primitive Update-Funktionalität
     #  - link, der auf mini-update-seite springt 
 
-    s += '<p><a href="' + checkUpdateURL + '">Click here to check for updates.</a></p>'
+   # s += '<p><a href="' + checkUpdateURL + '">Click here to check for updates.</a></p>'
     
     #  - Update image  (works, but currently not active due to privacy concerns
     # s += '<p><img src="'+checkUpdateImage+'" width="320" height="60" alt="Visual update indicator [loading...]" /></p>'
@@ -189,7 +189,7 @@ def style(text):
 #	term: [trans1, trans2, tras3]
 #   term (umgs.) : [trans4]
 
-def addEntry(word, definition):
+def addEntry(word, definition, entryType):
 	global dictionary;
 	
 	# normalization
@@ -259,8 +259,8 @@ def readVocabulary(filename):
             line = line.replace(">","&gt;")
 
             # split entry into english and german part 
-            data = line.split("\t", 1);
-            if len(data)!=2:
+            data = line.split("\t", 2);
+            if len(data)<2:
                 errors = errors+1
                 if arguments.debug:
                     print "Error: "+line
@@ -268,6 +268,10 @@ def readVocabulary(filename):
 
             left = data[0].strip();
             right = data[1].strip();
+            entryType = "";
+            if len(data)>=3:
+                entryType = data[2].strip();
+               
 
 
             # fix quotes
@@ -281,16 +285,16 @@ def readVocabulary(filename):
 
             # ok... add to dictionary
             try:
-                addEntry(left, right);
+                addEntry(left, right, entryType);
             except:
                 if arguments.debug:
-                    print "addEntry('%s', '%s') failed!" % (left, right)
+                    print "addEntry('%s', '%s', '%s%') failed!" % (left, right, entryType)
                 errors =  errors+1
             try:
-                addEntry(right, left);
+                addEntry(right, left, entryType);
             except:
                 if arguments.debug:
-                    print "addEntry('%s', '%s') failed!" % (right, left)
+                    print "addEntry('%s', '%s', '%s') failed!" % (right, left, entryType)
                 errors =  errors+1
 
         input.close

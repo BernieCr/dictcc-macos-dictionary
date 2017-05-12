@@ -116,7 +116,7 @@ def updateInPreferences():
     s += '<p>This dictionary is based on the vocabulary database from http://dict.cc/.<br />'
     s += 'It was generated on ' + datetime.date.today().strftime('%A, %B %d %Y') + ' and contains ' + str(thousandsseparator(statistics['entries'])) + ' entries.</p>'
     
-    s += '<p>The copyright for the vocabulary database is held by Paul Hemetsberger and the dict.cc community. Philipp Brauner (lipflip.org) converted the database into a format suitable for OS X and wrote a series of tools to do so. Parts of his work were inspired by Wolfgang Reszel (tekl.de) and his Beolingus plugin.</p>'
+    s += '<p>The copyright for the vocabulary database is held by Paul Hemetsberger and the dict.cc community. Philipp Brauner (lipflip.org) converted the database into a format suitable for OS X and wrote a series of tools to do so. Parts of his work were inspired by Wolfgang Reszel (tekl.de) and his Beolingus plugin. Additional work was done by Bernhard Caspar. The source code for the dictionary generation tool is available at https://github.com/bernhardc/dictcc-macos-dictionary</p>'
 
     # Primitive Update-Funktionalität
     #  - link, der auf mini-update-seite springt 
@@ -155,7 +155,7 @@ def createPlist():
 	<key>DCSDictionaryCopyright</key>
 	<string>%s</string>
 	<key>DCSDictionaryManufacturerName</key>
-	<string>Paul Hemetsberger, dict.cc / Philipp Brauner, lipflip.org / Wolfgang Reszel, www.tekl.de</string>
+	<string>Paul Hemetsberger, dict.cc / Philipp Brauner, lipflip.org / Wolfgang Reszel, www.tekl.de / Bernhard Caspar, https://github.com/bernhardc</string>
 	<key>DCSDictionaryFrontMatterReferenceID</key>
 	<string>front_back_matter</string>
 </dict>
@@ -182,11 +182,11 @@ def style(text):
 	
 	nestedRoundBrackets = re.compile('\(([^)]+)\(([^)]+)\)')
 	if not nestedRoundBrackets.search(text):
-		text = re.sub('(\([^)]+\))', r' <span id="a">\1</span>',text)
+		text = re.sub('(\([^)]+\))', r' <span class="a">\1</span>',text)
 	
 	nestedSquareBrackets = re.compile('\[([^]]+)\[([^]]+)\]')
 	if not nestedSquareBrackets.search(text):
-		text = re.sub('(\[[^]]+\])', r' <span id="b">\1</span>',text)
+		text = re.sub('(\[[^]]+\])', r' <span class="b">\1</span>',text)
 	
 	return text
 
@@ -442,7 +442,7 @@ def renderEntry(ID, index):
         s+=sub
         
     # add a footer
-    s+='<div id="f">'
+    s+='<div class="f">'
     
     # URL for online query
 #    s+='on <a href="'+generateSearchQuery(title)+'">dict.cc</a>'   

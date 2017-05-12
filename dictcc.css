@@ -23,20 +23,20 @@ ul {
 	padding: 0;
 }
 
-#a {
+.a {
     font-size: 80%;
     font-weight: normal;
     vertical-align: baseline;
     padding-left: 0.1em;
 }
 
-#b	{
+.b	{
 	font-size: 80%;
     vertical-align: baseline;
     color: gray;
 }
 
-#f {
+.f {
 	font-size: 80%;
 	color: gray;
 	text-align: right;

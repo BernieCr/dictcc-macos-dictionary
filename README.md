@@ -31,7 +31,7 @@ Partially by Wolfgang Reszel<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://web.mac.com/tekl/deutsch/Wörterbücher.html
    
 Additional work by Bernhard Caspar<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://www.github.com/fdsf
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/bernhardc/dictcc-macos-dictionary
 	
 ## License
 This project is released under GPL license

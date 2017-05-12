@@ -1,14 +1,11 @@
-TODO:
-    * Frequently update vocabulary data (how often? once a year?)
-    * Support non-ascii language names (Deutsch-FranzÖsisch will not be
-      build yet)
-    * Upcoming packages
-        - French-German
-        - Icelandic-German
-        - Portuguese-German
-        - Italian-German
 
 CHANGELOG:
+
+2017-05-12
+	-   Test build with most recent dict.cc word list (DE-EN)
+2016-04-10
+	-   Restore compatibility with more recent dict.cc word lists
+	-   Add word type (e.g verb, noun) to dictionary entries
 2011-05-26
     -   1.029.390 entries in DE-EN
     -   Uses tab separated input files
@@ -30,4 +27,17 @@ CHANGELOG:
         the dictionary.app aggregates multiple simular entries automagically,
         the widget does not thus it's harder to lookup similar words 
     - 528.637 entries in DE-EN
+    
+    
+    
+ROADMAP:
+    * Frequently update vocabulary data (how often? once a year?)
+    * Support non-ascii language names (Deutsch-FranzÖsisch will not be
+      build yet)
+    * Upcoming packages
+        - French-German
+        - Icelandic-German
+        - Portuguese-German
+        - Italian-German
+
 

@@ -2,7 +2,7 @@ by Philipp Brauner/Lipflip 2008, licensed under the GLP
    lipflip@lipflip.org
    http://lipflip.org/articles/dictcc-dictionary-plugin
 Partially by Wolfgang Reszel
-   http://web.mac.com/tekl/deutsch/Wörterbücher.html
+   http://web.mac.com/tekl/deutsch/W√∂rterb√ºcher.html
 
 Installation:
 1. Unzip dictcc-dictionary-distrib.zip. You already did this. Hooray!

@@ -176,10 +176,19 @@ def createDictionary():
 #
 #   styles meta information of dictionary entries (e.g. "{colloq.}")
 def style(text):
-    text = re.sub('(\{[^}]+\})', r' <i>\1</i>',text)
-    text = re.sub('(\([^)]+\))', r' <span id="a">\1</span>',text)
-    text = re.sub('(\[[^]]+\])', r' <span id="b">\1</span>',text)
-    return text
+	nestedCurlyBrackets = re.compile('\{([^}]+)\{([^}]+)\}')
+	if not nestedCurlyBrackets.search(text):
+		text = re.sub('(\{[^}]+\})', r' <i>\1</i>',text)
+	
+	nestedRoundBrackets = re.compile('\(([^)]+)\(([^)]+)\)')
+	if not nestedRoundBrackets.search(text):
+		text = re.sub('(\([^)]+\))', r' <span id="a">\1</span>',text)
+	
+	nestedSquareBrackets = re.compile('\[([^]]+)\[([^]]+)\]')
+	if not nestedSquareBrackets.search(text):
+		text = re.sub('(\[[^]]+\])', r' <span id="b">\1</span>',text)
+	
+	return text
 
 
 #
@@ -267,10 +276,16 @@ def readVocabulary(filename):
                     print "  Found fingerprint: " + line
                 continue
 
-            # remove incompatible characters
+            # HTML escape some incompatible characters
             line = line.replace("<","&lt;")
             line = line.replace(">","&gt;")
             line = line.replace("&","&amp;")
+
+            # remove some non-printable "gremlin" characters
+            line = line.replace("\a","")
+            line = line.replace("\b","")
+            line = line.replace("\f","")
+            line = line.replace("\r","")
 
             # split entry into english and german part 
             data = line.split("\t", 2);

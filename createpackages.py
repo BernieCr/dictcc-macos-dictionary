@@ -1,10 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#  Warning:
-#  This is my first dive into Python. There is much room for improvement. :)
-#  Some parts are implemented in a rather ugly manner.
-#  Philipp Brauner  - lipflip.org
-#  Wolfgang Reszel - www.tekl.de 
 
 import sys, re, string, codecs, datetime, os, locale, urllib, argparse, cgi, locale, shutil
 
@@ -22,10 +17,9 @@ statistics = {'indexkeys': 0, 'entries': 0, 'variants': 0, 'elements': 0}
 # initialize an empty dictionary
 dictionary = {}
 
-#
-# URL for update checking
+
 creationDate =  str(datetime.date.today())
-checkVersionURL= "http://lipflip.org/dictcc?date="+creationDate
+
 
 
 def thousandsseparator (number):
@@ -39,7 +33,10 @@ def main(argv):
     print("dict.cc Dictionary Generator for MacOS")
     print("    Version 3.0 (2017-05-13)")
     print("    licensed under the GLP")
-    print("    http://lipflip.org/articles/dictcc-dictionary-plugin")
+    print("    https://github.com/bernhardc/dictcc-macos-dictionary")
+    
+    reload(sys)  
+    sys.setdefaultencoding('utf8')
     
     parser = argparse.ArgumentParser(description="dict.cc to Dictionary.app XML Converter")
     
@@ -51,7 +48,7 @@ def main(argv):
 
     parser.add_argument('filename', type=str, action='store', default="DE-EN.txt", help='Language package to create (e.g. "DE-EN.txt")')
     parser.add_argument('shortname', type=str, action='store', default="DE-EN", help='Short name of language package to create (e.g. "DE-EN")')
-    parser.add_argument('longname', type=str, action='store', default="Deutsch-Englisch by dict.cc", help='Long name of language package to create (e.g. "Deutsch-Englisch dict.cc")')
+    parser.add_argument('longname', type=str, action='store', default="Deutsch-Englisch by dict.cc", help='Long name of language package to create (e.g. "Deutsch-Englisch (dict.cc)")')
     
     global arguments
     arguments = parser.parse_args()
@@ -64,24 +61,23 @@ def main(argv):
         arguments.urlprefix = string.replace(string.lower(arguments.shortname), '-', '')
 
     # Fix encoding of long title (e.g. make Deutsch FranzÖsisch work)
-    #u = unicode('abcü', 'iso-8859-1')
-    arguments.longnameencoded = "%s".encode('iso-8859-1') % unicode(arguments.longname, 'iso-8859-1')
+    arguments.longnameencoded = arguments.longname
 
 
     # enable printing of unicode strings without using .encode() millions of times
-    print("Switching sys.stdout to utf-16...")
-    sys.stdout = codecs.getwriter("utf-16")(sys.stdout);
-    print(" switched!")
+    print("Switching sys.stdout to utf-8...")
+    sys.stdout = codecs.getwriter("utf-8")(sys.stdout);
 
-    arguments.distfolder = "dist"
     arguments.buildfolder = "build"
     arguments.stagefolder = arguments.buildfolder + "/stage"
+    arguments.distfolder = "dist"
    
     arguments.tempfile = arguments.buildfolder + '/dictionary.xml'
 
+    if os.path.exists(arguments.buildfolder):
+        shutil.rmtree(arguments.buildfolder)
 
-    if not os.path.exists(arguments.buildfolder):
-        os.makedirs(arguments.buildfolder)
+    os.makedirs(arguments.buildfolder)
     
     if not os.path.exists(arguments.stagefolder):
         os.makedirs(arguments.stagefolder)
@@ -117,7 +113,6 @@ def createPackage():
 	packageName = arguments.longname + ".pkg"
 	
 	command = string.join(["pkgbuild --root", arguments.stagefolder, "--identifier", "com.macosdictcc."+arguments.urlprefix, "--version", scriptVersion, "--install-location /Library/Dictionaries", "\"" + arguments.distfolder + "/" + packageName + "\""], " ")
-	print command
 	os.system(command)
 	
 	print ""
@@ -125,23 +120,14 @@ def createPackage():
 
 
 def updateInPreferences():
-    global statistics, arguments, checkVersionURL
-    checkUpdateImage = 'http://tools.lipflip.org/dict.cc/updateimage.php?date='+creationDate+'&amp;lang='+arguments.shortname
-    checkUpdateURL = 'http://tools.lipflip.org/dict.cc/update.php?date='+creationDate+'&amp;lang='+arguments.shortname+'&amp;mode=preferences'
-
+    global statistics, arguments
+	
     s = '<strong>' + arguments.longnameencoded + '</strong><br />'
     s += '<p>This dictionary is based on the vocabulary database from http://dict.cc/.<br />'
     s += 'It was generated on ' + datetime.date.today().strftime('%A, %B %d %Y') + ' and contains ' + str(thousandsseparator(statistics['entries'])) + ' entries.</p>'
     
     s += '<p>The copyright for the vocabulary database is held by Paul Hemetsberger and the dict.cc community. Philipp Brauner (lipflip.org) converted the database into a format suitable for OS X and wrote a series of tools to do so. Parts of his work were inspired by Wolfgang Reszel (tekl.de) and his Beolingus plugin. Additional work was done by Bernhard Caspar. The source code for the dictionary generation tool is available at https://github.com/bernhardc/dictcc-macos-dictionary</p>'
 
-    # Primitive Update-Funktionalität
-    #  - link, der auf mini-update-seite springt 
-
-   # s += '<p><a href="' + checkUpdateURL + '">Click here to check for updates.</a></p>'
-    
-    #  - Update image  (works, but currently not active due to privacy concerns
-    # s += '<p><img src="'+checkUpdateImage+'" width="320" height="60" alt="Visual update indicator [loading...]" /></p>'
     s += '<p>For more information visit</p>'
     s += '<p>http://tools.lipflip.org/dict.cc/</p>'
 
@@ -164,7 +150,7 @@ def createPlist():
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.dictionary.dictcc</string>
 	<key>CFBundleName</key>
-	<string>%s</string>
+	<string>%s (dict.cc)</string>
 	<key>CFBundleVersion</key>
 	<string>%s</string>
 	<key>CFBundleShortVersionString</key>
@@ -475,7 +461,7 @@ def renderEntry(ID, index):
 # Generate XML output
 def generateXML(filename):
     print "Generating XML output"
-    global statistics, arguments, dictionary, arguments, checkVersionURL
+    global statistics, arguments, dictionary, arguments
 
     # prepare output
     if (arguments.debug):
@@ -486,12 +472,6 @@ def generateXML(filename):
     output.write(u'''<?xml version="1.0" encoding="UTF-8"?>
 <d:dictionary xmlns="http://www.w3.org/1999/xhtml" xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng">\n''')
   
-  
-    # Primitive Update-Funktionalität
-    #  - link, der auf mini-update-seite springt 
-
-    checkUpdateURL = 'http://tools.lipflip.org/dict.cc/update.php?date='+creationDate+'&amp;lang='+arguments.shortname
-
     # process each dictionary term
     count = 0
     for term in dictionary.keys():

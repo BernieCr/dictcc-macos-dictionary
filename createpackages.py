@@ -31,9 +31,12 @@ def thousandsseparator (number):
 #
 def main(argv):
     global scriptVersion
+    
+    print("")
     print("dict.cc Dictionary Generator for MacOS")
     print("    Version " + scriptVersion + " (2017-05-13)")
     print("    licensed under the GLP")
+    print("    https://www.bernhardcaspar.de/dictcc")
     print("    https://github.com/bernhardc/dictcc-macos-dictionary")
 
     print("")
@@ -136,7 +139,7 @@ def updateInPreferences():
     s += '<p>The copyright for the vocabulary database is held by Paul Hemetsberger and the dict.cc community. Philipp Brauner (lipflip.org) converted the database into a format suitable for OS X and wrote a series of tools to do so. Parts of his work were inspired by Wolfgang Reszel (tekl.de) and his Beolingus plugin. Additional work was done by Bernhard Caspar. The source code for the dictionary generation tool is available at https://github.com/bernhardc/dictcc-macos-dictionary</p>'
 
     s += '<p>For more information visit</p>'
-    s += '<p>http://tools.lipflip.org/dict.cc/</p>'
+    s += '<p>https://www.bernhardcaspar.de/dictcc</p>'
 
     if(arguments.debug):
         print s
@@ -165,7 +168,7 @@ def createPlist():
     <key>DCSDictionaryCopyright</key>
     <string>%s</string>
     <key>DCSDictionaryManufacturerName</key>
-    <string>Paul Hemetsberger, dict.cc / Philipp Brauner, lipflip.org / Wolfgang Reszel, www.tekl.de / Bernhard Caspar, https://github.com/bernhardc</string>
+    <string>Paul Hemetsberger, dict.cc / Philipp Brauner, lipflip.org / Wolfgang Reszel, www.tekl.de / Bernhard Caspar, https://www.bernhardcaspar.de/dictcc</string>
     <key>DCSDictionaryFrontMatterReferenceID</key>
     <string>front_back_matter</string>
 </dict>
@@ -501,11 +504,11 @@ def generateXML(filename):
 
     <h1>dict.cc Wörterbuch %s</h1>
     <p>Dieses Wörterbuch stammt aus dem von Paul Hemetsberger angebotenen Online-Wörterbuch <a href="http://www.dict.cc">www.dict.cc</a>, das seinerseits auf der Wortliste von <a href="http://dict.tu-chemnitz.de/">dict.tu-chemnitz.de</a>, sowie der Mitarbeit zahlreicher Benutzerinnen und Benutzer von dict.cc basiert.</p>
-    <p>Dieses Wörterbuch wurde von <a href="https://github.com/bernhardc">Bernhard Caspar</a> erstellt. Die Erzeugung basiert auf den
+    <p>Dieses Wörterbuch wurde von <a href="https://www.bernhardcaspar.de/dictcc">Bernhard Caspar</a> erstellt. Die Erzeugung basiert auf den
      Werkzeugen zur Erstellung eines Plugins für Dictionary.App/Lexikon von <a href="http://lipflip.org/articles/dictcc-dictionary-plugin">Philipp Brauner</a>, welche durch die Integration eines ähnlichen Tools von <a href="http://www.tekl.de/">Wolfgang Reszel</a> erheblich verbessert wurden.</p>
 
     <p>Dieses Wörterbuch wurde am %s erstellt und enthält %s Einträge.</p>
-        <p>Weitere aktuelle Informationen und den Quellcode finden Sie hier (auf englisch):<br /><a href="https://github.com/bernhardc/dictcc-macos-dictionary">https://github.com/bernhardc/dictcc-macos-dictionary</a>.</p>
+        <p>Weitere aktuelle Informationen und den Quellcode finden Sie hier:<br /><a href="https://www.bernhardcaspar.de/dictcc">https://www.bernhardcaspar.de/dictcc</a>.</p>
 <p></p>
     <p><h1>Lizenz:</h1>
 Nutzungsbedingungen der Übersetzungsdaten von dict.cc<br />

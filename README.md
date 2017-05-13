@@ -14,17 +14,21 @@ The dictionary itself can be downloaded from (Link)
 Currently the following languages are available (built in May 2017):
 
 - German - English
+- German - Spanish
+- German - French
+- German - Icelandic
+- German - Italian
 - German - Swedish
+- German - Russian
+- German - Portugese
 
-
-The dictionary is compatible with all MacOS versions starting from 10.6 up until Sierra (10.12).
 <br/>
 <br/>
 
 ## Installation
 
 Download a dictionary or build one by yourself (build instructions see below).<br/>
-Copy the .dictionary file (for example "Deutsch-Englisch (dict.cc).dictionary") to /Library/Dictionaries<br/>
+Double click the dictionary (.pkg) and follow the installer 
 Open the Dictionary app</br>
 Go to Preferences<br/>
 Activate the dictionary by checking the checkbox (the new dictionary will be at the bottom of the list)
@@ -47,7 +51,7 @@ open .dmg<br/>
 Utilities/Dictionary Development Kit<br/>
 copy to /Developer/Extras/Dictionary Development Kit<br/>
 
-Run Python build script (it's written in Python 2)<br/>
+Run Python build script (written in Python 2)<br/>
 for example: python createpackages.py -d de-en.txt DE-EN "Deutsch-Englisch (dict.cc)"
 
 <br/>

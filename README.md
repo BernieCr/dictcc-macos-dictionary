@@ -1,5 +1,37 @@
-# dict.cc Dictionary Generator for MacOS 
+# dict.cc Dictionary Generator for MacOS
 
+![Screenshot](screenshot.png)
+
+<br/>
+This is a Python script to create a MacOS (OS X) dictionary from dict.cc word lists. The generated dictionary is a regular dictionary for the MacOS stock Dictionary app, which means you can also look up words using Sportlight or anywhere via 3-Finger-Tap.
+
+<br/>
+<br/>
+The dictionary itself can be downloaded from (Link)
+
+<br/>
+<br/>
+Currently the following languages are available (built in May 2017):
+
+- German - English
+- German - Swedish
+
+
+The dictionary is compatible with all MacOS versions starting from 10.6 up until Sierra (10.12).
+<br/>
+<br/>
+
+## Installation
+
+Download a dictionary or build one by yourself (build instructions see below).<br/>
+Copy the .dictionary file (for example "Deutsch-Englisch (dict.cc).dictionary") to /Library/Dictionaries<br/>
+Open the Dictionary app</br>
+Go to Preferences<br/>
+Activate the dictionary by checking the checkbox (the new dictionary will be at the bottom of the list)
+
+
+<br/>
+<br/>
 
 ## Build Instructions
 
@@ -15,23 +47,24 @@ open .dmg<br/>
 Utilities/Dictionary Development Kit<br/>
 copy to /Developer/Extras/Dictionary Development Kit<br/>
 
-Run Python 2 build script<br/>
+Run Python build script (it's written in Python 2)<br/>
 for example: python createpackages.py -d de-en.txt DE-EN "Deutsch-Englisch (dict.cc)"
 
 <br/>
 
 ## Project Credits
 
-by Philipp Brauner/Lipflip 2008<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lipflip@lipflip.org<br/>
+Bernhard Caspar<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/bernhardc/dictcc-macos-dictionary
+
+Philipp Brauner/Lipflip<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://lipflip.org/articles/dictcc-dictionary-plugin<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://lipflip.org/node/2096
    
-Partially by Wolfgang Reszel<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://web.mac.com/tekl/deutsch/Wörterbücher.html
+Wolfgang Reszel<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://www.tekl.de/deutsch/Lexikon-Plugins.html
    
-Additional work by Bernhard Caspar<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/bernhardc/dictcc-macos-dictionary
+
 	
 ## License
 This project is released under GPL license

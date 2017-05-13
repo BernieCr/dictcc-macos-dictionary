@@ -395,7 +395,7 @@ def generateIndexEntries(entry):
     startWords = [
         # English
         'to', 'sth.', 'sb.', 'sb.\'s', 'sb./sth.',
-        # German
+        # German - I am sure there are still some prepositions missing though.
         'etw.', 'Etw.', 'auf etw.', 'auf jdn./etw.', 'auf jdn.', 'mit etw.', 'mit jdm./etw.', 'mit jdm.', 'von etw.', 'vor etw.', 'auf jdm./etw.', 'auf jdn.', 'jdm./etw.', 'jd.', 'jds.', 'jdm. etw.', 'jdm.', 'jdn.', 'jds./etw.', 'jd./etw.', 'jdn./etw.', 'die', 'der', 'den', 'das', 'eine', 'einen', 'ein', 'sich mit etw.', 'sich mit jdm.', 'sich', 'von etw.', 'von jdm./etw.', 'vor jdm./etw.', 'zu etw.', 'zu jdm./etw.', 'zu jdm.', 'über etw.',
         # French
         'se'
@@ -405,7 +405,10 @@ def generateIndexEntries(entry):
     for variant in variants:
         indexKeys.append(fix(variant))
         for startWord in startWords:
-            if variant.startswith(startWord + " "): indexKeys.append(fix(variant[(len(startWord)+1):]))  # download -> download, to download
+            if variant.startswith(startWord + " "): 
+                coreWord = fix(variant[(len(startWord)+1):])
+                if coreWord: 
+                    indexKeys.append(coreWord)  # download -> download, to download
 
     return indexKeys
 

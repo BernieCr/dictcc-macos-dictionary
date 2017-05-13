@@ -3,17 +3,29 @@
 
 <br/>
 
-2017-05-12
+2017-05-13 - v3.0
 - 1.404.624 entries in DE-EN
-- Build with most recent dict.cc word list (DE-EN)
+- Update compatibility to most recent dict.cc word list format
 - Remove some non-printable characters that break dictionary generation from parsed word list 
 - Fix an issue where nested brackets in word definitions break dictionary generation
-
+- Fine tune dictionary entry styling
+- Improve build process
+- Update info texts within dictionary and remove some broken references
+- Add MacOS installer .pkg generation to build script
+- Fix some bugs in build script
+- Successfully build dictionaries for the following language pairs:
+  - German - English
+  - German - Spanish
+  - German - French
+  - German - Icelandic
+  - German - Italian
+  - German - Swedish
+  
 2016-04-10
 - Restore compatibility with more recent dict.cc word lists
 - Add word type (e.g verb, noun) to dictionary entries
 
-2011-05-26
+2011-05-26 - v2.9
 - 1.029.390 entries in DE-EN
 - Uses tab separated input files
 - added a link to the internal "about" page instead of a online access

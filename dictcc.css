@@ -24,27 +24,26 @@ ul {
 }
 
 .a {
-    font-size: 80%;
+    font-size: 85%;
     font-weight: normal;
     vertical-align: baseline;
     padding-left: 0.1em;
 }
 
 .b	{
-	font-size: 80%;
+	font-size: 85%;
     vertical-align: baseline;
-    color: #777777;
-	font-weight: normal:
+    color: #555555;
+	font-weight: normal;
 }
 
 h1 .b {
-	color: #969696;
 	padding-left: 0.3em;
 }
 
 .f {
-	font-size: 80%;
-	color: #777777;
+	font-size: 85%;
+	color: #555555;
 	text-align: right;
-	font-weight: normal:
+	font-weight: normal;
 }

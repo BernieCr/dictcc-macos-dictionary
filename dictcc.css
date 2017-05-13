@@ -13,9 +13,9 @@ h1 b {
 }
 
 i {
-    font-weight:normal;
-    font-size:80%;
-	padding-right:0.2em;
+    font-weight: normal;
+    font-size: 80%;
+	padding-right: 0.2em;
 }
 
 ul {
@@ -33,11 +33,18 @@ ul {
 .b	{
 	font-size: 80%;
     vertical-align: baseline;
-    color: gray;
+    color: #888888;
+	font-weight: normal:
+}
+
+h1 .b {
+	color: #969696;
+	padding-left: 0.3em;
 }
 
 .f {
 	font-size: 80%;
-	color: gray;
+	color: #777777;
 	text-align: right;
+	font-weight: normal:
 }

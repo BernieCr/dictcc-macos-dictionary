@@ -283,8 +283,8 @@ def readVocabulary(filename):
                 continue
 
             # HTML escape some incompatible characters
-            line = line.replace("<","&lt;")
-            line = line.replace(">","&gt;")
+            line = line.replace("<","«")
+            line = line.replace(">","»")
             line = line.replace("&","&amp;")
 
             # remove some non-printable "gremlin" characters

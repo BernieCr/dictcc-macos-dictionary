@@ -30,8 +30,9 @@ def thousandsseparator (number):
 #   Handles parameter parsing and appropriate execution of the various steps in the tool chain
 #
 def main(argv):
+    global scriptVersion
     print("dict.cc Dictionary Generator for MacOS")
-    print("    Version 3.0 (2017-05-13)")
+    print("    Version " + scriptVersion + " (2017-05-13)")
     print("    licensed under the GLP")
     print("    https://github.com/bernhardc/dictcc-macos-dictionary")
     
@@ -44,9 +45,9 @@ def main(argv):
     parser.add_argument('-x', '--subset', action='store_true', dest='generatesubset', default=False, help='Creates much smaller packages with a random subset of words')
     parser.add_argument('-e', '--encoding', action='store', dest='encoding', default='utf_8', help='Character encoding of input file (default UTF8)')
     
-    parser.add_argument('-v', '--version', action='store', dest='osxversion', default='10.5', help='required OS X version (packages for 10.6 are smaller) (default 10.5)')
+    parser.add_argument('-v', '--version', action='store', dest='osxversion', default='10.6', help='MacOS minimum target version for Dictionary SDK (default: 10.6)')
 
-    parser.add_argument('filename', type=str, action='store', default="DE-EN.txt", help='Language package to create (e.g. "DE-EN.txt")')
+    parser.add_argument('filename', type=str, action='store', default="DE-EN.txt", help='dict.cc word list to create dictionary from (e.g. "DE-EN.txt")')
     parser.add_argument('shortname', type=str, action='store', default="DE-EN", help='Short name of language package to create (e.g. "DE-EN")')
     parser.add_argument('longname', type=str, action='store', default="Deutsch-Englisch by dict.cc", help='Long name of language package to create (e.g. "Deutsch-Englisch (dict.cc)")')
     
@@ -90,12 +91,10 @@ def main(argv):
         print "Debug:     ", arguments.debug
         print "Subset:    ", arguments.generatesubset
         print "Filename:  ", arguments.filename
-        print "Tempfile:  ", arguments.tempfile
         print "URLPrefix: ", arguments.urlprefix
         print "Shortname: ", arguments.shortname
         print "Longname:  ", arguments.longname
         print "Encoding:  ", arguments.encoding
-        print "OSXVersion:", arguments.osxversion
     
     
     readVocabulary(arguments.filename)
@@ -107,21 +106,23 @@ def main(argv):
     
     
 def createPackage():
-	global arguments
-	print("Creating installation package")
-	
-	packageName = arguments.longname + ".pkg"
-	
-	command = string.join(["pkgbuild --root", arguments.stagefolder, "--identifier", "com.macosdictcc."+arguments.urlprefix, "--version", scriptVersion, "--install-location /Library/Dictionaries", "\"" + arguments.distfolder + "/" + packageName + "\""], " ")
-	os.system(command)
-	
-	print ""
-	print "Successfully generated dictionary installation package: " + arguments.distfolder + "/" + packageName
+    global arguments
+    print("Creating installation package")
+    
+    packageName = arguments.longname + ".pkg"
+    
+    command = string.join(["pkgbuild --root", arguments.stagefolder, "--identifier", "com.macosdictcc."+arguments.urlprefix, "--version", scriptVersion, "--install-location /Library/Dictionaries", "\"" + arguments.distfolder + "/" + packageName + "\""], " ")
+    os.system(command)
+    
+    print ""
+    print ""
+    print "Successfully generated dictionary installation package: \'" + arguments.distfolder + "/" + packageName + "\'"
+    print ""
 
 
 def updateInPreferences():
     global statistics, arguments
-	
+    
     s = '<strong>' + arguments.longnameencoded + '</strong><br />'
     s += '<p>This dictionary is based on the vocabulary database from http://dict.cc/.<br />'
     s += 'It was generated on ' + datetime.date.today().strftime('%A, %B %d %Y') + ' and contains ' + str(thousandsseparator(statistics['entries'])) + ' entries.</p>'
@@ -145,35 +146,35 @@ def createPlist():
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>German</string>
-	<key>CFBundleIdentifier</key>
-	<string>com.apple.dictionary.dictcc</string>
-	<key>CFBundleName</key>
-	<string>%s (dict.cc)</string>
-	<key>CFBundleVersion</key>
-	<string>%s</string>
-	<key>CFBundleShortVersionString</key>
-	<string>%s</string>
-	<key>DCSDictionaryCopyright</key>
-	<string>%s</string>
-	<key>DCSDictionaryManufacturerName</key>
-	<string>Paul Hemetsberger, dict.cc / Philipp Brauner, lipflip.org / Wolfgang Reszel, www.tekl.de / Bernhard Caspar, https://github.com/bernhardc</string>
-	<key>DCSDictionaryFrontMatterReferenceID</key>
-	<string>front_back_matter</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>German</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.apple.dictionary.dictcc%s</string>
+    <key>CFBundleName</key>
+    <string>%s (dict.cc)</string>
+    <key>CFBundleVersion</key>
+    <string>%s</string>
+    <key>CFBundleShortVersionString</key>
+    <string>%s</string>
+    <key>DCSDictionaryCopyright</key>
+    <string>%s</string>
+    <key>DCSDictionaryManufacturerName</key>
+    <string>Paul Hemetsberger, dict.cc / Philipp Brauner, lipflip.org / Wolfgang Reszel, www.tekl.de / Bernhard Caspar, https://github.com/bernhardc</string>
+    <key>DCSDictionaryFrontMatterReferenceID</key>
+    <string>front_back_matter</string>
 </dict>
 </plist>
-''' % (arguments.shortname, str(datetime.date.today()), str(datetime.date.today()), '<![CDATA['+updateInPreferences()+']]>' ) )
+''' % (arguments.urlprefix, arguments.shortname, str(datetime.date.today()), str(datetime.date.today()), '<![CDATA['+updateInPreferences()+']]>' ) )
 
 
 def createDictionary():
-    global arguments
+    global arguments1
     print "Calling external script to create dictionary"
     # -v 10.5 -> bigger packages
     # -v 10.6 -> smaller packages
     # arguments.osxversion
-    command = string.join(["/Developer/Extras/Dictionary\ Development\ Kit/bin/build_dict.sh", "-v 10.6", '"'+arguments.longname+'"', arguments.tempfile, "dictcc.css", arguments.buildfolder + "/dictcc.plist"], " ")
-#    print "% "+ command
+    command = string.join(["/Developer/Extras/Dictionary\ Development\ Kit/bin/build_dict.sh", "-v "+arguments.osxversion, '"'+arguments.longname+'"', arguments.tempfile, "dictcc.css", arguments.buildfolder + "/dictcc.plist"], " ")
+    # print "% "+ command
     os.system(command)
     
     shutil.move("objects/" + arguments.longname + ".dictionary", arguments.stagefolder)
@@ -182,74 +183,74 @@ def createDictionary():
 #
 #   styles meta information of dictionary entries (e.g. "{colloq.}")
 def style(text):
-	nestedCurlyBrackets = re.compile('\{([^}]+)\{([^}]+)\}')
-	if not nestedCurlyBrackets.search(text):
-		text = re.sub('(\{[^}]+\})', r' <i>\1</i>',text)
-	
-	nestedRoundBrackets = re.compile('\(([^)]+)\(([^)]+)\)')
-	if not nestedRoundBrackets.search(text):
-		text = re.sub('(\([^)]+\))', r' <span class="a">\1</span>',text)
-	
-	nestedSquareBrackets = re.compile('\[([^]]+)\[([^]]+)\]')
-	if not nestedSquareBrackets.search(text):
-		text = re.sub('(\[[^]]+\])', r' <span class="b">\1</span>',text)
-	
-	return text
+    nestedCurlyBrackets = re.compile('\{([^}]+)\{([^}]+)\}')
+    if not nestedCurlyBrackets.search(text):
+        text = re.sub('(\{[^}]+\})', r' <i>\1</i>',text)
+    
+    nestedRoundBrackets = re.compile('\(([^)]+)\(([^)]+)\)')
+    if not nestedRoundBrackets.search(text):
+        text = re.sub('(\([^)]+\))', r' <span class="a">\1</span>',text)
+    
+    nestedSquareBrackets = re.compile('\[([^]]+)\[([^]]+)\]')
+    if not nestedSquareBrackets.search(text):
+        text = re.sub('(\[[^]]+\])', r' <span class="b">\1</span>',text)
+    
+    return text
 
 
 #
 # calculates an index-key and adds the entry to the dictionary
 # multiple translations and annotated terms are stored in one entry
 # INDEX: term
-#	term: [trans1, trans2, tras3]
+#    term: [trans1, trans2, tras3]
 #   term (umgs.) : [trans4]
 
 def addEntry(word, definition, entryType):
-	global dictionary;
-	
-	# normalization
-	# prepare index string // remove all kinds of additional descriptions
-	index = word
-	if index.startswith("to "): index =  index[3:] # strip (to)
-	index = re.sub('(\([^)]+\))', r'',index)
-	index = re.sub('(\{[^}]+\})', r'',index)
-	index = re.sub('(\[[^]]+\])', r'',index)
-	index = re.sub('  ', r' ', index) # remove
-	index = index.strip()   # .lower()
-	index = index.lower()
-	if index.endswith("-"): index = index[:-1]
+    global dictionary;
+    
+    # normalization
+    # prepare index string // remove all kinds of additional descriptions
+    index = word
+    if index.startswith("to "): index =  index[3:] # strip (to)
+    index = re.sub('(\([^)]+\))', r'',index)
+    index = re.sub('(\{[^}]+\})', r'',index)
+    index = re.sub('(\[[^]]+\])', r'',index)
+    index = re.sub('  ', r' ', index) # remove
+    index = index.strip()   # .lower()
+    index = index.lower()
+    if index.endswith("-"): index = index[:-1]
    
-	definitionx = definition
-	if entryType!='': definitionx = definition + '(' + entryType + ')'
+    definitionx = definition
+    if entryType!='': definitionx = definition + '(' + entryType + ')'
 
-	# nothing left to be used as an index (e.g. entries like sayings) 
-	if len(index)<1:
-		raise NameError
-	
-	#dictionary[index][entries]	 -> 
-	#dictionary[index][entryType][entries]
+    # nothing left to be used as an index (e.g. entries like sayings) 
+    if len(index)<1:
+        raise NameError
+    
+    #dictionary[index][entries]     -> 
+    #dictionary[index][entryType][entries]
 
-	# get entry from dictionary	
-	if dictionary.has_key(index):
-		entry = dictionary[index]
-	else:
-		entry = {}      # not found? create new entry
-		
-	#if entry.has_key(entryType):
-#		subentry = entry[entryType]
-#	else:
-#		subentry = {}
+    # get entry from dictionary    
+    if dictionary.has_key(index):
+        entry = dictionary[index]
+    else:
+        entry = {}      # not found? create new entry
+        
+    #if entry.has_key(entryType):
+#        subentry = entry[entryType]
+#    else:
+#        subentry = {}
 
-	# add translation to entry 
-	if entry.has_key(word):
-		entry[word].append(definitionx)
-	else:
-		entry[word]=[definitionx]
-		
-	#entry[entryType] = subentry
+    # add translation to entry 
+    if entry.has_key(word):
+        entry[word].append(definitionx)
+    else:
+        entry[word]=[definitionx]
+        
+    #entry[entryType] = subentry
 
-	# store entry in dictionary
-	dictionary[index] = entry;
+    # store entry in dictionary
+    dictionary[index] = entry;
 
 
 #
@@ -322,14 +323,14 @@ def readVocabulary(filename):
             try:
                 addEntry(left, right, entryType);
             except:
-				dsfsf=5
+                dsfsf=5
                 #if arguments.debug:
                    # print "addEntry('%s', '%s', '%s') failed!" % (left, right, entryType)
                 #errors =  errors+1
             try:
                 addEntry(right, left, entryType);
             except:
-				dsfsf=5
+                dsfsf=5
                 #if arguments.debug:
                    # print "addEntry('%s', '%s', '%s') failed!" % (right, left, entryType)
                 #errors =  errors+1
@@ -476,11 +477,9 @@ def generateXML(filename):
     count = 0
     for term in dictionary.keys():
         count = count + 1
-        output.write(renderEntry(count, term))       
-    # front matter
-    if arguments.debug:
-        print "  Vordere/hintere seiten anlegen..."
+        output.write(renderEntry(count, term))      
 
+    # front matter
 #<d:index d:value="Vorwort (dict.cc-plugin)"/>
 #<d:index d:value="Lizenz (dict.cc-plugin)"/>
 #<d:index d:value="Copyright (dict.cc-plugin)"/>

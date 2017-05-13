@@ -365,7 +365,7 @@ def generateSearchQuery(title):
 
 #
 # generate a set of keys in the index
-# to download -> { to download, download }
+# to download -> { to download, download } etc.
 def generateIndexEntries(entry):
     def fix(text):
         text = re.sub('  ', r' ', text) # remove dublicate spaces
@@ -392,11 +392,20 @@ def generateIndexEntries(entry):
         extendedText = re.sub('\(([^)]+)\)', r'\g<1>', text)
         variants.append ( extendedText )
 
+    startWords = [
+        # English
+        'to', 'sth.', 'sb.', 'sb.\'s', 'sb./sth.',
+        # German
+        'etw.', 'Etw.', 'auf etw.', 'auf jdn./etw.', 'auf jdn.', 'mit etw.', 'mit jdm./etw.', 'mit jdm.', 'von etw.', 'vor etw.', 'auf jdm./etw.', 'auf jdn.', 'jdm./etw.', 'jd.', 'jds.', 'jdm. etw.', 'jdm.', 'jdn.', 'jds./etw.', 'jd./etw.', 'jdn./etw.', 'die', 'der', 'den', 'das', 'eine', 'einen', 'ein', 'sich mit etw.', 'sich mit jdm.', 'sich', 'von etw.', 'von jdm./etw.', 'vor jdm./etw.', 'zu etw.', 'zu jdm./etw.', 'zu jdm.', 'über etw.',
+        # French
+        'se'
+    ]
 
     # loop through variants and add normalized keys
     for variant in variants:
         indexKeys.append(fix(variant))
-        if variant.startswith("to "): indexKeys.append(fix(variant[3:]))  # download -> download, to download
+        for startWord in startWords:
+            if variant.startswith(startWord + " "): indexKeys.append(fix(variant[(len(startWord)+1):]))  # download -> download, to download
 
     return indexKeys
 

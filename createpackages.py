@@ -35,12 +35,17 @@ def main(argv):
     print("    Version " + scriptVersion + " (2017-05-13)")
     print("    licensed under the GLP")
     print("    https://github.com/bernhardc/dictcc-macos-dictionary")
+
+    print("")
+    print("    Example usage:")
+    print("       python createpackages.py -d de-en.sample.txt DE-EN \"Deutsch-Englisch Sample (dict.cc)\"")
+    print("")
     
     reload(sys)  
     sys.setdefaultencoding('utf8')
     
-    parser = argparse.ArgumentParser(description="dict.cc to Dictionary.app XML Converter")
-    
+    parser = argparse.ArgumentParser(description="dict.cc Dictionary Generator for MacOS")
+
     parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help='Enables debug output')
     parser.add_argument('-x', '--subset', action='store_true', dest='generatesubset', default=False, help='Creates much smaller packages with a random subset of words')
     parser.add_argument('-e', '--encoding', action='store', dest='encoding', default='utf_8', help='Character encoding of input file (default UTF8)')
@@ -53,6 +58,7 @@ def main(argv):
     
     global arguments
     arguments = parser.parse_args()
+
     
     
     # DE-IT -> dtit.dict.cc -> Will work for online lookups

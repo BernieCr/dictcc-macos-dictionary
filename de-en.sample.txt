@@ -1,0 +1,38 @@
+#
+# DE-EN [sample] vocabulary database	compiled by dict.cc
+#
+# This is just a sample file. Get the real one from
+#       http://www1.dict.cc/translation_file_request.php
+#
+# Once you've built and installed this sample dictionary,
+# open the Dictionary App and search for 'f'. This will
+# show all the sample entries.
+#
+#
+Flur {m} im ersten Stock	second floor hallway [Am.]	noun
+Flur {m} [Korridor]	hallway	noun
+Flur {m} [Korridor]	hall [corridor]	noun
+Flur {m} [Treppenabsatz]	landing	noun
+Flusenfilter {m} [fachspr. meist {n}]	fluff filter	noun
+flusenfrei	lint-free	adj
+Flusensieb {n}	lint filter	noun
+flusen [nordd.] [fusseln]	to give off fluff	verb
+Flusen {pl}	fluffs	noun
+Freifahrschein {m}	free ticket	noun
+Freifahrtschein {m}	free travel ticket	noun
+Freifahrtschein {m} [fig.]	free ride [fig.]	noun
+Freifahrturbine {f}	free power turbine	noun
+Freifahrtwagen {m} [Bühnentechnik]	chariot	noun
+Freifallbombe {f}	free-fall bomb	noun
+Freifallbombe {f}	gravity bomb	noun
+Freifallbombe {f}	iron bomb [unguided bomb]	noun
+Freifallbombe {f}	unguided bomb	noun
+Freifallbär {m}	drop hammer	noun
+freifallende Bombe {f}	free-fall bomb	noun
+freifallende Bombe {f}	free-falling bomb	noun
+freifallende Bombe {f}	gravity bomb	noun
+frei fallend	freely falling	adj
+Freifallmischer {m}	gravity mixer	noun
+Freifallramme {f}	fall hammer	noun
+Freifallturm {m}	drop tower	noun
+Freifeld-Prüfanlage {f}	open area test site <OATS>	noun

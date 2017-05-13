@@ -1,4 +1,5 @@
 *.txt
+!de-en.sample.txt
 dictionary.xml
 dictcc.plist
 objects/

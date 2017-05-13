@@ -1,4 +1,7 @@
+*.txt
 dictionary.xml
 dictcc.plist
 objects/
-*.txt
+dist/
+stage/
+build/

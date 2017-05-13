@@ -6,7 +6,9 @@
 #  Philipp Brauner  - lipflip.org
 #  Wolfgang Reszel - www.tekl.de 
 
-import sys, re, string, codecs, datetime, os, locale, urllib, argparse, cgi, locale
+import sys, re, string, codecs, datetime, os, locale, urllib, argparse, cgi, locale, shutil
+
+scriptVersion = "3.0"
 
 #
 # Global variable for storing the command line arguments
@@ -34,9 +36,8 @@ def thousandsseparator (number):
 #   Handles parameter parsing and appropriate execution of the various steps in the tool chain
 #
 def main(argv):
-    print("dict.cc to Dictionary.app XML Converter - $Id$")
-    print("    Version 2.9")
-    print("    Philipp M. Brauner -  lipflip.org")
+    print("dict.cc Dictionary Generator for MacOS")
+    print("    Version 3.0 (2017-05-13)")
     print("    licensed under the GLP")
     print("    http://lipflip.org/articles/dictcc-dictionary-plugin")
     
@@ -51,7 +52,6 @@ def main(argv):
     parser.add_argument('filename', type=str, action='store', default="DE-EN.txt", help='Language package to create (e.g. "DE-EN.txt")')
     parser.add_argument('shortname', type=str, action='store', default="DE-EN", help='Short name of language package to create (e.g. "DE-EN")')
     parser.add_argument('longname', type=str, action='store', default="Deutsch-Englisch by dict.cc", help='Long name of language package to create (e.g. "Deutsch-Englisch dict.cc")')
-    parser.add_argument('-tempfile', type=str, action='store', default="dictionary.xml", help='Temporary file')
     
     global arguments
     arguments = parser.parse_args()
@@ -61,13 +61,35 @@ def main(argv):
     if(string.upper(arguments.shortname)=="DE-EN"):
         arguments.urlprefix = ""
     else:
-        arguments.urlprefix = string.replace(string.lower(arguments.shortname), '-', '') + '.'
+        arguments.urlprefix = string.replace(string.lower(arguments.shortname), '-', '')
 
     # Fix encoding of long title (e.g. make Deutsch FranzÖsisch work)
     #u = unicode('abcü', 'iso-8859-1')
     arguments.longnameencoded = "%s".encode('iso-8859-1') % unicode(arguments.longname, 'iso-8859-1')
 
 
+    # enable printing of unicode strings without using .encode() millions of times
+    print("Switching sys.stdout to utf-16...")
+    sys.stdout = codecs.getwriter("utf-16")(sys.stdout);
+    print(" switched!")
+
+    arguments.distfolder = "dist"
+    arguments.buildfolder = "build"
+    arguments.stagefolder = arguments.buildfolder + "/stage"
+   
+    arguments.tempfile = arguments.buildfolder + '/dictionary.xml'
+
+
+    if not os.path.exists(arguments.buildfolder):
+        os.makedirs(arguments.buildfolder)
+    
+    if not os.path.exists(arguments.stagefolder):
+        os.makedirs(arguments.stagefolder)
+    
+    if not os.path.exists(arguments.distfolder):
+        os.makedirs(arguments.distfolder)
+    
+    
     if(arguments.debug):
         print "Debug:     ", arguments.debug
         print "Subset:    ", arguments.generatesubset
@@ -78,15 +100,7 @@ def main(argv):
         print "Longname:  ", arguments.longname
         print "Encoding:  ", arguments.encoding
         print "OSXVersion:", arguments.osxversion
-
-    # enable printing of unicode strings without using .encode() millions of times
-    print("Switching sys.stdout to utf-16...")
-    sys.stdout = codecs.getwriter("utf-16")(sys.stdout);
-    print(" switched!")
-
-    global checkVersionURL
-    checkVersionURL = "http://lipflip.org/dictcc?date="+creationDate+"&lang="+arguments.shortname
-
+    
     
     readVocabulary(arguments.filename)
     generateXML(arguments.tempfile)
@@ -97,15 +111,18 @@ def main(argv):
     
     
 def createPackage():
-    print("Creating installation package")
-    
-# todo
-#	@/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker -d $(PMDOC_NAME) -o $(DICT_NAME)_$(DATE).pkg
-#	@echo "- Zipping Install Package."
-#	@zip $(DICT_NAME)_$(DATE).zip -9 -o $(DICT_NAME)_$(DATE).pkg 
-#	@echo "Done."
-#	@echo "Execute '$(DICT_NAME) $(DATE).pkg' to install the dictionary."
+	global arguments
+	print("Creating installation package")
 	
+	packageName = arguments.longname + ".pkg"
+	
+	command = string.join(["pkgbuild --root", arguments.stagefolder, "--identifier", "com.macosdictcc."+arguments.urlprefix, "--version", scriptVersion, "--install-location /Library/Dictionaries", "\"" + arguments.distfolder + "/" + packageName + "\""], " ")
+	print command
+	os.system(command)
+	
+	print ""
+	print "Successfully generated dictionary installation package: " + arguments.distfolder + "/" + packageName
+
 
 def updateInPreferences():
     global statistics, arguments, checkVersionURL
@@ -137,7 +154,7 @@ def createPlist():
     global arguments
     print("Creating plist")
     
-    output = codecs.open("dictcc.plist","w","utf-8")
+    output = codecs.open(arguments.buildfolder + "/dictcc.plist","w","utf-8")
     output.write(u'''<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -169,9 +186,12 @@ def createDictionary():
     # -v 10.5 -> bigger packages
     # -v 10.6 -> smaller packages
     # arguments.osxversion
-    command = string.join(["/Developer/Extras/Dictionary\ Development\ Kit/bin/build_dict.sh", "-v 10.6", '"'+arguments.longname+'"', arguments.tempfile, "dictcc.css", "dictcc.plist"], " ")
+    command = string.join(["/Developer/Extras/Dictionary\ Development\ Kit/bin/build_dict.sh", "-v 10.6", '"'+arguments.longname+'"', arguments.tempfile, "dictcc.css", arguments.buildfolder + "/dictcc.plist"], " ")
 #    print "% "+ command
     os.system(command)
+    
+    shutil.move("objects/" + arguments.longname + ".dictionary", arguments.stagefolder)
+    shutil.move("objects", arguments.buildfolder)
     
 #
 #   styles meta information of dictionary entries (e.g. "{colloq.}")
@@ -344,7 +364,7 @@ def readVocabulary(filename):
 def generateSearchQuery(title):
     global arguments
 #    encodedTitle = urllib.quote_plus(title.encode('cp1252'))
-    return "http://"+arguments.urlprefix+"dict.cc?s="+title
+    return "http://"+arguments.urlprefix+".dict.cc?s="+title
 
 
 #
@@ -445,15 +465,9 @@ def renderEntry(ID, index):
     s+='<div class="f">'
     
     # URL for online query
-#    s+='on <a href="'+generateSearchQuery(title)+'">dict.cc</a>'   
-
-    s+='<a href="'+generateSearchQuery(title)+'">lookup online</a>'   
-
-    s+=' | <a href="x-dictionary:r:front_back_matter">About</a>'
-    # check version link
-#    s+=' | <a href="'+checkVersionURL+'">Update?</a> '
+    s+='<a href="'+generateSearchQuery(title)+'">dict.cc</a>'
+    s+=' | <a href="x-dictionary:r:front_back_matter">Info</a>'
     s+='</div>'
-    
     s+='</d:entry>\n\n'
 
     return s
@@ -502,9 +516,11 @@ def generateXML(filename):
 
     <h1>dict.cc Wörterbuch %s</h1>
     <p>Dieses Wörterbuch stammt aus dem von Paul Hemetsberger angebotenen Online-Wörterbuch <a href="http://www.dict.cc">www.dict.cc</a>, das seinerseits auf der Wortliste von <a href="http://dict.tu-chemnitz.de/">dict.tu-chemnitz.de</a>, sowie der Mitarbeit zahlreicher Benutzerinnen und Benutzer von dict.cc basiert.</p>
-    <p>Die Werkzeuge zur Erstellung eines Plugins für Dictionary.App/Lexikon wurden von <a href="http://lipflip.org/articles/dictcc-dictionary-plugin">Philipp Brauner</a> entwickelt und durch die Integration eines ähnlichen Tools von <a href="http://www.tekl.de/">Wolfgang Reszel</a> erheblich verbessert.</p>
-    <p>Dieses Wörterbuch wurde am %s erstellt und enthält %s Einträge (<a href="%s">Nach Aktualisierungen suchen</a>).</p>
-        <p>Weitere aktuelle Informationen finden sie hier:<br /><a href="http://tools.lipflip.org/dict.cc/">http://tools.lipflip.org/dict.cc/</a>.</p>
+    <p>Dieses Wörterbuch wurde von <a href="https://github.com/bernhardc">Bernhard Caspar</a> erstellt. Die Erzeugung basiert auf den
+     Werkzeugen zur Erstellung eines Plugins für Dictionary.App/Lexikon von <a href="http://lipflip.org/articles/dictcc-dictionary-plugin">Philipp Brauner</a>, welche durch die Integration eines ähnlichen Tools von <a href="http://www.tekl.de/">Wolfgang Reszel</a> erheblich verbessert wurden.</p>
+
+    <p>Dieses Wörterbuch wurde am %s erstellt und enthält %s Einträge.</p>
+        <p>Weitere aktuelle Informationen und den Quellcode finden Sie hier (auf englisch):<br /><a href="https://github.com/bernhardc/dictcc-macos-dictionary">https://github.com/bernhardc/dictcc-macos-dictionary</a>.</p>
 <p></p>
     <p><h1>Lizenz:</h1>
 Nutzungsbedingungen der Übersetzungsdaten von dict.cc<br />
@@ -528,7 +544,7 @@ Die Verwendung der Daten im Zusammenhang mit Suchmaschinen-Optimierungstaktiken 
 WEITERE BESTIMMUNGEN<br />
 Sämtliche Aspekte bezüglich der Übersetzungsdaten von dict.cc, die in diesen Bestimmungen nicht eindeutig behandelt sind, bedürfen einer schriftlichen Klärung vor einer eventuellen Verwendung. Bei Verstößen gegen diese Bedingungen behält sich der Betreiber von dict.cc rechtliche Schritte vor. Der Gerichtsstand ist Wien. Es gilt materielles österreichisches Recht.<br /></p>
 </d:entry>
-''' % (arguments.longnameencoded, datetime.date.today().strftime('%d.%m.%Y'), thousandsseparator(str(statistics['entries'])), checkUpdateURL)  )
+''' % (arguments.longnameencoded, datetime.date.today().strftime('%d.%m.%Y'), thousandsseparator(str(statistics['entries'])))  )
 
     if(arguments.debug):
         print("  Closing dictionary xml...")

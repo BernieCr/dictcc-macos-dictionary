@@ -4,6 +4,7 @@
 import sys, re, string, codecs, datetime, os, locale, urllib, argparse, cgi, locale, shutil
 
 scriptVersion = "3.0"
+scriptName = "dict.cc Dictionary Generator for MacOS"
 
 #
 # Global variable for storing the command line arguments
@@ -30,10 +31,10 @@ def thousandsseparator (number):
 #   Handles parameter parsing and appropriate execution of the various steps in the tool chain
 #
 def main(argv):
-    global scriptVersion
+    global scriptVersion, scriptName
     
     print("")
-    print("dict.cc Dictionary Generator for MacOS")
+    print(scriptName)
     print("    Version " + scriptVersion + " (2017-05-13)")
     print("    licensed under the GLP")
     print("    https://www.bernhardcaspar.de/dictcc")
@@ -47,7 +48,7 @@ def main(argv):
     reload(sys)  
     sys.setdefaultencoding('utf8')
     
-    parser = argparse.ArgumentParser(description="dict.cc Dictionary Generator for MacOS")
+    parser = argparse.ArgumentParser(description=scriptName)
 
     parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help='Enables debug output')
     parser.add_argument('-x', '--subset', action='store_true', dest='generatesubset', default=False, help='Creates much smaller packages with a random subset of words')
@@ -125,7 +126,9 @@ def createPackage():
     
     print ""
     print ""
-    print "Successfully generated dictionary installation package: \'" + arguments.distfolder + "/" + packageName + "\'"
+    print "Successfully generated dictionary installation package: "
+    print ""
+    print "    " + arguments.distfolder + "/" + packageName
     print ""
 
 
@@ -494,7 +497,7 @@ def renderEntry(ID, index):
 # Generate XML output
 def generateXML(filename):
     print "Generating XML output"
-    global statistics, arguments, dictionary, arguments
+    global statistics, arguments, dictionary, arguments, scriptVersion, scriptName
 
     # prepare output
     if (arguments.debug):
@@ -522,7 +525,7 @@ def generateXML(filename):
 #    encodedlongname = "%s".encode('iso-8859-1') % u
     
     output.write(u'''
-<d:entry id="front_back_matter" d:title="Vorwort">
+<d:entry id="front_back_matter" d:title="Info">
 
 
     <h1>dict.cc Wörterbuch %s</h1>
@@ -531,8 +534,12 @@ def generateXML(filename):
      Werkzeugen zur Erstellung eines Plugins für Dictionary.App/Lexikon von <a href="http://lipflip.org/articles/dictcc-dictionary-plugin">Philipp Brauner</a>, welche durch die Integration eines ähnlichen Tools von <a href="http://www.tekl.de/">Wolfgang Reszel</a> erheblich verbessert wurden.</p>
 
     <p>Dieses Wörterbuch wurde am %s erstellt und enthält %s Einträge.</p>
-        <p>Weitere aktuelle Informationen und den Quellcode finden Sie hier:<br /><a href="https://www.bernhardcaspar.de/dictcc">https://www.bernhardcaspar.de/dictcc</a>.</p>
-<p></p>
+        <p>Weitere aktuelle Informationen finden Sie hier:<br /><a href="https://www.bernhardcaspar.de/dictcc">https://www.bernhardcaspar.de/dictcc</a>.</p>
+    <p> <br/> </p>
+    <h1>Erstellt mit:</h1>
+    <p>%s %s</p>
+    <p><a href="https://github.com/bernhardc/dictcc-macos-dictionary">https://github.com/bernhardc/dictcc-macos-dictionary</a></p>
+    <p> <br/> </p>
     <p><h1>Lizenz:</h1>
 Nutzungsbedingungen der Übersetzungsdaten von dict.cc<br />
 Stand vom 11. Februar 2005<br />
@@ -555,7 +562,7 @@ Die Verwendung der Daten im Zusammenhang mit Suchmaschinen-Optimierungstaktiken 
 WEITERE BESTIMMUNGEN<br />
 Sämtliche Aspekte bezüglich der Übersetzungsdaten von dict.cc, die in diesen Bestimmungen nicht eindeutig behandelt sind, bedürfen einer schriftlichen Klärung vor einer eventuellen Verwendung. Bei Verstößen gegen diese Bedingungen behält sich der Betreiber von dict.cc rechtliche Schritte vor. Der Gerichtsstand ist Wien. Es gilt materielles österreichisches Recht.<br /></p>
 </d:entry>
-''' % (arguments.longnameencoded, datetime.date.today().strftime('%d.%m.%Y'), thousandsseparator(str(statistics['entries'])))  )
+''' % (arguments.longnameencoded, datetime.date.today().strftime('%d.%m.%Y'), thousandsseparator(str(statistics['entries'])), scriptName, scriptVersion ) )
 
     if(arguments.debug):
         print("  Closing dictionary xml...")

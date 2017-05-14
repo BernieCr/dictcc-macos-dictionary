@@ -59,7 +59,7 @@ for example: python createpackages.py -d de-en.txt DE-EN "Deutsch-Englisch (dict
 ## Project Credits
 
 Bernhard Caspar<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/bernhardc/dictcc-macos-dictionary
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://www.bernhardcaspar.de/dictcc
 
 Philipp Brauner/Lipflip<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://lipflip.org/articles/dictcc-dictionary-plugin<br/>

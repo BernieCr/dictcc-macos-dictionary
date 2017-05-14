@@ -8,7 +8,7 @@
 - Update build script to make it compatible with most recent dict.cc word list format
 - Remove some non-printable characters from parsed word list that break dictionary generation
 - Fix an issue where nested brackets in word definitions break dictionary generation
-- Substantially improve indexing of words with prepositions ('anvertrauen' now finds 'sich jdm. anvertrauen' and 'jdm. etw. anvertrauen' etc.)
+- Substantially improve indexing of words with prepositions ('unterhalten' now finds 'sich unterhalten', 'jdn./etw. unterhalten' etc.)
 - Fine tune dictionary entry styling
 - Improve build process in general
 - Update info texts within dictionary and remove some broken references

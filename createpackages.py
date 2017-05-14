@@ -35,19 +35,15 @@ def main(argv):
     
     print("")
     print(scriptName)
-    print("    Version " + scriptVersion + " (2017-05-13)")
-    print("    licensed under the GLP")
-    print("    https://www.bernhardcaspar.de/dictcc")
-    print("    https://github.com/bernhardc/dictcc-macos-dictionary")
-
-    print("")
-    print("    Example usage:")
-    print("       python createpackages.py -d de-en.sample.txt DE-EN \"Deutsch-Englisch Sample (dict.cc)\"")
+    print("  Version " + scriptVersion)
+    print("  licensed under the GLP")
+    print("  https://www.bernhardcaspar.de/dictcc")
+    print("  https://github.com/bernhardc/dictcc-macos-dictionary")
     print("")
     
     reload(sys)  
     sys.setdefaultencoding('utf8')
-    
+        
     parser = argparse.ArgumentParser(description=scriptName)
 
     parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help='Enables debug output')
@@ -61,15 +57,27 @@ def main(argv):
     parser.add_argument('longname', type=str, action='store', default="Deutsch-Englisch by dict.cc", help='Long name of language package to create (e.g. "Deutsch-Englisch (dict.cc)")')
     
     global arguments
-    arguments = parser.parse_args()
-
     
+    try:
+        arguments = parser.parse_args()
+    except:
+        print("")
+        print("Show help:")
+        print("  python createpackages.py --help")
+        print("")
+        print("Example usage:")
+        print("  python createpackages.py -d de-en.sample.txt DE-EN \"Deutsch-Englisch Sample (dict.cc)\"")
+        print("")
+        return
+
+        
+    arguments.codename = string.replace(string.lower(arguments.shortname), '-', '')
     
     # DE-IT -> dtit.dict.cc -> Will work for online lookups
     if(string.upper(arguments.shortname)=="DE-EN"):
         arguments.urlprefix = ""
     else:
-        arguments.urlprefix = string.replace(string.lower(arguments.shortname), '-', '')
+        arguments.urlprefix = arguments.codename
 
     # Fix encoding of long title (e.g. make Deutsch FranzÖsisch work)
     arguments.longnameencoded = arguments.longname
@@ -101,6 +109,7 @@ def main(argv):
         print "Debug:     ", arguments.debug
         print "Subset:    ", arguments.generatesubset
         print "Filename:  ", arguments.filename
+        print "Codename:  ", arguments.codename
         print "URLPrefix: ", arguments.urlprefix
         print "Shortname: ", arguments.shortname
         print "Longname:  ", arguments.longname
@@ -121,14 +130,14 @@ def createPackage():
     
     packageName = arguments.longname + ".pkg"
     
-    command = string.join(["pkgbuild --root", arguments.stagefolder, "--identifier", "com.macosdictcc."+arguments.urlprefix, "--version", scriptVersion, "--install-location /Library/Dictionaries", "\"" + arguments.distfolder + "/" + packageName + "\""], " ")
+    command = string.join(["pkgbuild --root", arguments.stagefolder, "--identifier", "com.macosdictcc."+arguments.codename, "--version", scriptVersion, "--install-location /Library/Dictionaries", "\"" + arguments.distfolder + "/" + packageName + "\""], " ")
     os.system(command)
     
     print ""
     print ""
     print "Successfully generated dictionary installation package: "
     print ""
-    print "    " + arguments.distfolder + "/" + packageName
+    print "  " + arguments.distfolder + "/" + packageName
     print ""
 
 
@@ -176,7 +185,7 @@ def createPlist():
     <string>front_back_matter</string>
 </dict>
 </plist>
-''' % (arguments.urlprefix, arguments.shortname, str(datetime.date.today()), str(datetime.date.today()), '<![CDATA['+updateInPreferences()+']]>' ) )
+''' % (arguments.codename, arguments.shortname, str(datetime.date.today()), str(datetime.date.today()), '<![CDATA['+updateInPreferences()+']]>' ) )
 
 
 def createDictionary():
@@ -403,7 +412,7 @@ def generateIndexEntries(entry):
         # French
         'se',
         # German  - I am sure there are still some prepositions missing though.
-        'etw.', 'Etw.', 'auf', 'auf etw.', 'auf jdn./etw.', 'auf jdn.', 'mit', 'mit etw.', 'mit jdm./etw.', 'mit jdm.', 'von etw.', 'vor etw.', 'auf jdm./etw.', 'auf jdn.', 'jdm./etw.', 'jd.', 'jds.', 'jdm. etw.', 'jdm.', 'jdn.', 'jds./etw.', 'jd./etw.', 'jdn./etw.', 'die', 'der', 'den', 'das', 'eine', 'einen', 'ein', 'sich mit etw.', 'sich mit jdm.', 'sich', 'sich etw.', 'sich jdn.', 'sich jdm.', 'sich jdm./etw.', 'sich mit', 'sich mit etw.',  'sich mit jdm.', 'sich mit jdm./etw', 'von etw.', 'von jdm./etw.', 'vor jdm./etw.', 'zu', 'zu etw.', 'zu jdm./etw.', 'zu jdm.', 'über etw.'
+        'etw.', 'Etw.', 'auf', 'auf etw.', 'auf jdn./etw.', 'auf jdn.', 'mit', 'mit etw.', 'mit jdm./etw.', 'mit jdm.', 'von', 'vor', 'vor etw.', 'auf jdm./etw.', 'auf jdn.', 'jdm./etw.', 'jd.', 'jds.', 'jdm. etw.', 'jdm.', 'jdn.', 'jds./etw.', 'jd./etw.', 'jdn./etw.', 'die', 'der', 'den', 'das', 'eine', 'einen', 'ein', 'sich mit etw.', 'sich mit jdm.', 'sich', 'sich etw.', 'sich jdn.', 'sich jdm.', 'sich jdm./etw.', 'sich mit', 'sich mit etw.',  'sich mit jdm.', 'sich mit jdm./etw', 'von etw.', 'von jdm./etw.', 'vor jdm./etw.', 'zu', 'zu etw.', 'zu jdm./etw.', 'zu jdm.', 'über', 'über etw.'
         ]
 
     # loop through variants and add normalized keys

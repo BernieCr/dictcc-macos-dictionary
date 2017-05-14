@@ -400,17 +400,26 @@ def generateIndexEntries(entry):
         # French
         'se',
         # German  - I am sure there are still some prepositions missing though.
-        'etw.', 'Etw.', 'auf etw.', 'auf jdn./etw.', 'auf jdn.', 'mit etw.', 'mit jdm./etw.', 'mit jdm.', 'von etw.', 'vor etw.', 'auf jdm./etw.', 'auf jdn.', 'jdm./etw.', 'jd.', 'jds.', 'jdm. etw.', 'jdm.', 'jdn.', 'jds./etw.', 'jd./etw.', 'jdn./etw.', 'die', 'der', 'den', 'das', 'eine', 'einen', 'ein', 'sich mit etw.', 'sich mit jdm.', 'sich', 'von etw.', 'von jdm./etw.', 'vor jdm./etw.', 'zu etw.', 'zu jdm./etw.', 'zu jdm.', 'über etw.'
+        'etw.', 'Etw.', 'auf', 'auf etw.', 'auf jdn./etw.', 'auf jdn.', 'mit', 'mit etw.', 'mit jdm./etw.', 'mit jdm.', 'von etw.', 'vor etw.', 'auf jdm./etw.', 'auf jdn.', 'jdm./etw.', 'jd.', 'jds.', 'jdm. etw.', 'jdm.', 'jdn.', 'jds./etw.', 'jd./etw.', 'jdn./etw.', 'die', 'der', 'den', 'das', 'eine', 'einen', 'ein', 'sich mit etw.', 'sich mit jdm.', 'sich', 'sich etw.', 'sich jdn.', 'sich jdm.', 'sich jdm./etw.', 'sich mit', 'sich mit etw.',  'sich mit jdm.', 'sich mit jdm./etw', 'von etw.', 'von jdm./etw.', 'vor jdm./etw.', 'zu', 'zu etw.', 'zu jdm./etw.', 'zu jdm.', 'über etw.'
         ]
 
     # loop through variants and add normalized keys
     for variant in variants:
-        indexKeys.append(fix(variant))
+        fixedVariant = fix(variant)
+        indexKeys.append(fixedVariant)
+        
         for startWord in startWords:
-            if variant.startswith(startWord + " "): 
+            if variant.startswith(startWord + ' '): 
                 coreWord = fix(variant[(len(startWord)+1):])
                 if coreWord: 
                     indexKeys.append(coreWord)  # download -> download, to download
+        
+        strippedVariant = fixedVariant
+        for startWord in startWords:
+            strippedVariant = strippedVariant.replace(startWord + ' ', '');
+        strippedVariant = fix(strippedVariant)
+        if not (strippedVariant == fixedVariant):
+            indexKeys.append(strippedVariant)
 
     return indexKeys
 

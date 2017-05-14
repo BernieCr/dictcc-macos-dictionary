@@ -3,25 +3,28 @@
 
 <br/>
 
-2017-05-13 - v3.0
+2017-05-14 - v3.0
 - 1.404.624 entries in DE-EN
-- Update compatibility to most recent dict.cc word list format
-- Remove some non-printable characters that break dictionary generation from parsed word list 
+- Update build script to make it compatible with most recent dict.cc word list format
+- Remove some non-printable characters from parsed word list that break dictionary generation
 - Fix an issue where nested brackets in word definitions break dictionary generation
+- Substantially improve indexing of words with prepositions ('anvertrauen' now finds 'sich jdm. anvertrauen' and 'jdm. etw. anvertrauen' etc.)
 - Fine tune dictionary entry styling
-- Improve build process
+- Improve build process in general
 - Update info texts within dictionary and remove some broken references
 - Add MacOS installer .pkg generation to build script
-- Fix some bugs in build script
+- Fix some minor bugs in build script
 - Successfully build dictionaries for the following language pairs:
-  - German - English
-  - German - Spanish
-  - German - French
-  - German - Icelandic
-  - German - Italian
-  - German - Swedish
+  - German <-> English
+  - German <-> Spanish
+  - German <-> French
+  - German <-> Icelandic
+  - German <-> Italian
+  - German <-> Swedish
+  - German <-> Russian
+  - German <-> Portuguese
   
-2016-04-10
+2016-04-10 - (no public release)
 - Restore compatibility with more recent dict.cc word lists
 - Add word type (e.g verb, noun) to dictionary entries
 

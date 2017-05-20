@@ -53,8 +53,8 @@ def main(argv):
     parser.add_argument('-v', '--version', action='store', dest='osxversion', default='10.6', help='MacOS minimum target version for Dictionary SDK (default: 10.6)')
 
     parser.add_argument('filename', type=str, action='store', default="DE-EN.txt", help='dict.cc word list to create dictionary from (e.g. "DE-EN.txt")')
-    parser.add_argument('shortname', type=str, action='store', default="DE-EN", help='Short name of language package to create (e.g. "DE-EN")')
-    parser.add_argument('longname', type=str, action='store', default="Deutsch-Englisch by dict.cc", help='Long name of language package to create (e.g. "Deutsch-Englisch (dict.cc)")')
+    parser.add_argument('languagepair', type=str, action='store', default="DE-EN", help='Country codes of the dictionary language pair (e.g. "DE-EN")')
+    parser.add_argument('dictionaryname', type=str, action='store', default="Deutsch-Englisch by dict.cc", help='Name of the dictionary (e.g. "Deutsch-Englisch (dict.cc)")')
     
     global arguments
     
@@ -71,16 +71,17 @@ def main(argv):
         return
 
         
-    arguments.codename = string.replace(string.lower(arguments.shortname), '-', '')
-    
+    arguments.codename = string.replace(string.lower(arguments.languagepair), '-', '')
+    arguments.languages = arguments.languagepair.lower().split('-')
+
     # DE-IT -> dtit.dict.cc -> Will work for online lookups
-    if(string.upper(arguments.shortname)=="DE-EN"):
+    if(string.upper(arguments.languagepair)=="DE-EN"):
         arguments.urlprefix = ""
     else:
         arguments.urlprefix = arguments.codename
 
     # Fix encoding of long title (e.g. make Deutsch FranzÖsisch work)
-    arguments.longnameencoded = arguments.longname
+    arguments.dictionarynameencoded = arguments.dictionaryname
 
 
     # enable printing of unicode strings without using .encode() millions of times
@@ -111,8 +112,8 @@ def main(argv):
         print "Filename:  ", arguments.filename
         print "Codename:  ", arguments.codename
         print "URLPrefix: ", arguments.urlprefix
-        print "Shortname: ", arguments.shortname
-        print "Longname:  ", arguments.longname
+        print "languagepair: ", arguments.languagepair
+        print "dictionaryname:  ", arguments.dictionaryname
         print "Encoding:  ", arguments.encoding
     
     
@@ -128,7 +129,7 @@ def createPackage():
     global arguments
     print("Creating installation package")
     
-    packageName = arguments.longname + ".pkg"
+    packageName = arguments.dictionaryname + ".pkg"
     
     command = string.join(["pkgbuild --root", arguments.stagefolder, "--identifier", "com.macosdictcc."+arguments.codename, "--version", scriptVersion, "--install-location /Library/Dictionaries", "\"" + arguments.distfolder + "/" + packageName + "\""], " ")
     os.system(command)
@@ -144,7 +145,7 @@ def createPackage():
 def updateInPreferences():
     global statistics, arguments
     
-    s = '<strong>' + arguments.longnameencoded + '</strong><br />'
+    s = '<strong>' + arguments.dictionarynameencoded + '</strong><br />'
     s += '<p>This dictionary is based on the vocabulary database from http://dict.cc/.<br />'
     s += 'It was generated on ' + datetime.date.today().strftime('%A, %B %d %Y') + ' and contains ' + str(thousandsseparator(statistics['entries'])) + ' entries.</p>'
     
@@ -181,11 +182,26 @@ def createPlist():
     <string>%s</string>
     <key>DCSDictionaryManufacturerName</key>
     <string>Paul Hemetsberger, dict.cc / Philipp Brauner, lipflip.org / Wolfgang Reszel, www.tekl.de / Bernhard Caspar, https://www.bernhardcaspar.de/dictcc</string>
+    <key>DCSDictionaryLanguages</key>
+    <array>
+        <dict>
+            <key>DCSDictionaryIndexLanguage</key>
+            <string>%s</string>
+            <key>DCSDictionaryDescriptionLanguage</key>
+            <string>de</string>
+        </dict>
+        <dict>
+            <key>DCSDictionaryIndexLanguage</key>
+            <string>%s</string>
+            <key>DCSDictionaryDescriptionLanguage</key>
+            <string>de</string>
+        </dict>
+    </array>
     <key>DCSDictionaryFrontMatterReferenceID</key>
     <string>front_back_matter</string>
 </dict>
 </plist>
-''' % (arguments.codename, arguments.shortname, str(datetime.date.today()), str(datetime.date.today()), '<![CDATA['+updateInPreferences()+']]>' ) )
+''' % (arguments.codename, arguments.languagepair, str(datetime.date.today()), str(datetime.date.today()), '<![CDATA['+updateInPreferences()+']]>', arguments.languages[0], arguments.languages[1] ) )
 
 
 def createDictionary():
@@ -194,11 +210,11 @@ def createDictionary():
     # -v 10.5 -> bigger packages
     # -v 10.6 -> smaller packages
     # arguments.osxversion
-    command = string.join(["/Developer/Extras/Dictionary\ Development\ Kit/bin/build_dict.sh", "-v "+arguments.osxversion, '"'+arguments.longname+'"', arguments.tempfile, "dictcc.css", arguments.buildfolder + "/dictcc.plist"], " ")
+    command = string.join(["/Developer/Extras/Dictionary\ Development\ Kit/bin/build_dict.sh", "-v "+arguments.osxversion, '"'+arguments.dictionaryname+'"', arguments.tempfile, "dictcc.css", arguments.buildfolder + "/dictcc.plist"], " ")
     # print "% "+ command
     os.system(command)
     
-    shutil.move("objects/" + arguments.longname + ".dictionary", arguments.stagefolder)
+    shutil.move("objects/" + arguments.dictionaryname + ".dictionary", arguments.stagefolder)
     shutil.move("objects", arguments.buildfolder)
     
 #
@@ -531,7 +547,7 @@ def generateXML(filename):
 #<d:index d:value="update (dict.cc-Plugin)"/>
     
 #    u = unicode('abcü', 'iso-8859-1')
-#    encodedlongname = "%s".encode('iso-8859-1') % u
+#    encodeddictionaryname = "%s".encode('iso-8859-1') % u
     
     output.write(u'''
 <d:entry id="front_back_matter" d:title="Info">
@@ -571,7 +587,7 @@ Die Verwendung der Daten im Zusammenhang mit Suchmaschinen-Optimierungstaktiken 
 WEITERE BESTIMMUNGEN<br />
 Sämtliche Aspekte bezüglich der Übersetzungsdaten von dict.cc, die in diesen Bestimmungen nicht eindeutig behandelt sind, bedürfen einer schriftlichen Klärung vor einer eventuellen Verwendung. Bei Verstößen gegen diese Bedingungen behält sich der Betreiber von dict.cc rechtliche Schritte vor. Der Gerichtsstand ist Wien. Es gilt materielles österreichisches Recht.<br /></p>
 </d:entry>
-''' % (arguments.longnameencoded, datetime.date.today().strftime('%d.%m.%Y'), thousandsseparator(str(statistics['entries'])), scriptName, scriptVersion ) )
+''' % (arguments.dictionarynameencoded, datetime.date.today().strftime('%d.%m.%Y'), thousandsseparator(str(statistics['entries'])), scriptName, scriptVersion ) )
 
     if(arguments.debug):
         print("  Closing dictionary xml...")

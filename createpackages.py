@@ -52,8 +52,8 @@ def main(argv):
     
     parser.add_argument('-v', '--version', action='store', dest='osxversion', default='10.6', help='MacOS minimum target version for Dictionary SDK (default: 10.6)')
 
-    parser.add_argument('filename', type=str, action='store', default="DE-EN.txt", help='dict.cc word list to create dictionary from (e.g. "DE-EN.txt")')
-    parser.add_argument('languagepair', type=str, action='store', default="DE-EN", help='Country codes of the dictionary language pair (e.g. "DE-EN")')
+    parser.add_argument('filename', type=str, action='store', default="DE-EN.txt", help='dict.cc word list to create dictionary from (e.g. "de-en.txt")')
+    parser.add_argument('languagepair', type=str, action='store', default="DE-EN", help='Two-letter language codes of the dictionary language pair (e.g. "de-en")')
     parser.add_argument('dictionaryname', type=str, action='store', default="Deutsch-Englisch by dict.cc", help='Name of the dictionary (e.g. "Deutsch-Englisch (dict.cc)")')
     
     global arguments
@@ -66,7 +66,7 @@ def main(argv):
         print("  python createpackages.py --help")
         print("")
         print("Example usage:")
-        print("  python createpackages.py -d de-en.sample.txt DE-EN \"Deutsch-Englisch Sample (dict.cc)\"")
+        print("  python createpackages.py -d de-en.sample.txt de-en \"Deutsch-Englisch Sample (dict.cc)\"")
         print("")
         return
 
@@ -75,7 +75,7 @@ def main(argv):
     arguments.languages = arguments.languagepair.lower().split('-')
 
     # DE-IT -> dtit.dict.cc -> Will work for online lookups
-    if(string.upper(arguments.languagepair)=="DE-EN"):
+    if(string.lower(arguments.languagepair)=="de-en"):
         arguments.urlprefix = ""
     else:
         arguments.urlprefix = arguments.codename
@@ -83,6 +83,7 @@ def main(argv):
     # Fix encoding of long title (e.g. make Deutsch FranzÖsisch work)
     arguments.dictionarynameencoded = arguments.dictionaryname
 
+    arguments.dictionarynameshort = arguments.languagepair.upper() + ' (dict.cc)'
 
     # enable printing of unicode strings without using .encode() millions of times
     print("Switching sys.stdout to utf-8...")
@@ -107,14 +108,15 @@ def main(argv):
     
     
     if(arguments.debug):
-        print "Debug:     ", arguments.debug
-        print "Subset:    ", arguments.generatesubset
-        print "Filename:  ", arguments.filename
-        print "Codename:  ", arguments.codename
-        print "URLPrefix: ", arguments.urlprefix
-        print "languagepair: ", arguments.languagepair
-        print "dictionaryname:  ", arguments.dictionaryname
-        print "Encoding:  ", arguments.encoding
+        print "Debug:            ", arguments.debug
+        print "Subset:           ", arguments.generatesubset
+        print "Filename:         ", arguments.filename
+        print "Codename:         ", arguments.codename
+        print "URLPrefix:        ", arguments.urlprefix
+        print "Language Pair:    ", arguments.languagepair
+        print "Dictionary Name:  ", arguments.dictionaryname
+        print "Short Name:       ", arguments.dictionarynameshort
+        print "Encoding:         ", arguments.encoding
     
     
     readVocabulary(arguments.filename)
@@ -173,7 +175,7 @@ def createPlist():
     <key>CFBundleIdentifier</key>
     <string>com.apple.dictionary.dictcc%s</string>
     <key>CFBundleName</key>
-    <string>%s (dict.cc)</string>
+    <string>%s</string>
     <key>CFBundleVersion</key>
     <string>%s</string>
     <key>CFBundleShortVersionString</key>
@@ -201,7 +203,7 @@ def createPlist():
     <string>front_back_matter</string>
 </dict>
 </plist>
-''' % (arguments.codename, arguments.languagepair, str(datetime.date.today()), str(datetime.date.today()), '<![CDATA['+updateInPreferences()+']]>', arguments.languages[0], arguments.languages[1] ) )
+''' % (arguments.codename, arguments.dictionarynameshort, str(datetime.date.today()), str(datetime.date.today()), '<![CDATA['+updateInPreferences()+']]>', arguments.languages[0], arguments.languages[1] ) )
 
 
 def createDictionary():

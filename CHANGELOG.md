@@ -3,7 +3,7 @@
 
 <br/>
 
-2017-05-14 - v3.0 - Bernhard Caspar
+2017-05-20 - v3.0 - Bernhard Caspar
 - 1.404.624 entries in DE-EN
 - Update build script to make it compatible with most recent dict.cc word list format
 - Remove some non-printable characters from parsed word list that break dictionary generation
@@ -12,6 +12,7 @@
 - Fine tune dictionary entry styling
 - Improve build process in general
 - Update info texts within dictionary and remove some broken references
+- Add more metadata in order for dictionary entries to appear in Spotlight results
 - Add MacOS installer .pkg generation to build script
 - Fix some minor bugs in build script
 - Successfully build dictionaries for the following language pairs:
@@ -52,14 +53,5 @@
 - 528.637 entries in DE-EN
     
 <br/>
-    
-## Roadmap
-- Frequently update vocabulary data (how often? once a year?)
-- Support non-ascii language names (Deutsch-FranzÖsisch will not be
-      build yet)
-- Upcoming packages
-    - French-German
-    - Icelandic-German
-    - Portuguese-German
-    - Italian-German
+
 

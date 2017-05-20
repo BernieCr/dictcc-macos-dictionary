@@ -54,6 +54,34 @@ copy to /Developer/Extras/Dictionary Development Kit<br/>
 Run Python build script (written in Python 2)<br/>
 for example: python createpackages.py -d de-en.txt DE-EN "Deutsch-Englisch (dict.cc)"
 
+
+
+
+3. Download dict.cc's database(s) in UTF-8 encoding and place it in the
+   dictcc-dictionary-distrib directory.
+   You only need one database for each language pair (e.g. DE-EN, EN-DE is not
+   required).
+4. Open a Terminal and "cd" to the dictcc-dictionary-distrib directory.
+5. Launch the build script:
+   user$ ./createpackages.py $filename $short $long
+   Where $filename is the filename of the downloaded database, $shortname
+   is the short name of your dictionary (e.g. "DE-EN"), and $longname is the
+   long form of your dictionary's name (e.g. "Deutsch Englisch").
+   
+   user$ ./createpackages.py -dx DE-EN.txt DE-EN "Deutsch Englisch"
+   
+   There are some flags that toggle debug output (-d) or generate only a
+   minimal subset of the dictionary (-x).
+6. After some minutes or hours the dictionary can be found in
+   ./objects/$longname.
+   It can be installed by moving it into /Library/Dictionaries or
+   /Users/$username/Library/Dictionaries/
+7. Start/restart Dictionary.App.
+8. Keep in mind that the license of dict.cc prohibits the distribution of the
+   dict.cc database. Thus you are not allowed to distribute your dictionary.
+
+
+
 <br/>
 
 ## Project Credits
